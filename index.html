@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pokédex · Neon</title>
+  <meta name="description" content="Pokédex interactiva con PokéAPI, Tailwind CSS, tarjetas 3D, filtros por tipo y favoritos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { display: ["Space Grotesk", "sans-serif"], sans: ["Outfit", "system-ui", "sans-serif"] },
+          animation: { float: "float 6s ease-in-out infinite", "spin-slow": "spin 8s linear infinite", pop: "pop .35s cubic-bezier(.2,1.4,.4,1) both" },
+          keyframes: {
+            float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-14px)" } },
+            pop: { "0%": { opacity: 0, transform: "scale(.85) translateY(20px)" }, "100%": { opacity: 1, transform: "none" } }
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-[#07060f] font-sans text-slate-100 antialiased selection:bg-fuchsia-500/40">
+
+  <!-- fondo animado -->
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    <div class="blob left-[-10%] top-[-10%] h-[40rem] w-[40rem] bg-fuchsia-600/40"></div>
+    <div class="blob right-[-10%] top-[20%] h-[34rem] w-[34rem] bg-cyan-500/30 [animation-delay:-6s]"></div>
+    <div class="blob bottom-[-15%] left-[30%] h-[36rem] w-[36rem] bg-amber-500/20 [animation-delay:-12s]"></div>
+    <div class="bg-grid absolute inset-0"></div>
+  </div>
+
+  <header class="relative mx-auto max-w-6xl px-4 pb-6 pt-12 text-center">
+    <div class="mx-auto mb-5 flex items-center justify-center gap-4">
+      <div class="pokeball animate-spin-slow" aria-hidden="true"></div>
+      <h1 class="font-display text-5xl font-bold tracking-tight sm:text-7xl">
+        <span class="title-grad">POKÉDEX</span>
+      </h1>
+    </div>
+    <p class="mx-auto max-w-xl text-slate-400">Explora, filtra y colecciona. Datos en vivo desde <span class="text-cyan-300">PokéAPI</span>.</p>
+
+    <form id="search" class="glass mx-auto mt-8 flex max-w-2xl items-center gap-2 rounded-full p-2 pl-5 focus-within:ring-2 focus-within:ring-fuchsia-400/70">
+      <svg class="h-5 w-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+      <input id="q" class="min-w-0 flex-1 bg-transparent py-2 text-base outline-none placeholder:text-slate-500" placeholder="Busca por nombre o número… (pulsa / )" autocomplete="off">
+      <button class="rounded-full bg-gradient-to-r from-fuchsia-500 to-orange-400 px-6 py-2.5 font-bold text-white shadow-lg shadow-fuchsia-500/30 transition hover:scale-105 active:scale-95">Buscar</button>
+    </form>
+
+    <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+      <button id="random" class="glass rounded-full px-4 py-1.5 text-sm font-medium transition hover:bg-white/15">🎲 Sorpréndeme</button>
+      <button id="favsBtn" class="glass rounded-full px-4 py-1.5 text-sm font-medium transition hover:bg-white/15">❤️ Favoritos <span id="favCount" class="ml-1 rounded-full bg-fuchsia-500/80 px-2 text-xs">0</span></button>
+    </div>
+
+    <nav id="types" class="mt-6 flex flex-wrap justify-center gap-2" aria-label="Filtrar por tipo"></nav>
+  </header>
+
+  <main class="relative mx-auto max-w-6xl px-4 pb-24">
+    <p id="status" class="min-h-[1.5rem] text-center text-sm text-slate-400" role="status"></p>
+    <div id="grid" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 [perspective:1200px]"></div>
+
+    <div class="mt-10 flex items-center justify-center gap-4">
+      <button id="prev" class="glass rounded-full px-5 py-2.5 font-medium transition hover:bg-white/15 disabled:pointer-events-none disabled:opacity-30">← Anterior</button>
+      <span id="page" class="font-display text-sm text-slate-300"></span>
+      <button id="next" class="glass rounded-full px-5 py-2.5 font-medium transition hover:bg-white/15 disabled:pointer-events-none disabled:opacity-30">Siguiente →</button>
+    </div>
+  </main>
+
+  <!-- modal de detalle -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Detalle del Pokémon">
+    <div id="backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-md"></div>
+    <div id="sheet" class="glass relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl"></div>
+  </div>
+
+  <footer class="pb-8 text-center text-xs text-slate-500">Hecho con Tailwind CSS · ← → para navegar · Esc para cerrar</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
